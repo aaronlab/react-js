@@ -15,7 +15,7 @@
   <script type="text/babel">
     const root = document.getElementById("root");
 
-    function App() {
+    function MinutesToHours() {
       const [amount, setAmount] = React.useState(0);
       const [inverted, setInverted] = React.useState(false);
 
@@ -34,8 +34,6 @@
 
       return (
         <div>
-          <h1>Super Converter</h1>
-
           <div>
             <label htmlFor="minutes">Minutes</label>
             <input
@@ -63,6 +61,78 @@
           <button onClick={onInvert}>
             {inverted ? "Turn Back" : "Invert"}
           </button>
+        </div>
+      );
+    }
+
+    function KmToMiles() {
+      const [value, setValue] = React.useState(0);
+      const [inverted, setInverted] = React.useState(false);
+
+      const onChange = (event) => {
+        setValue(event.target.value);
+      };
+
+      const reset = () => setValue(0);
+
+      const onInvert = () => {
+        reset();
+        setInverted((current) => !current);
+      };
+
+      return (
+        <div>
+          <div>
+            <label htmlFor="km">Km</label>
+            <input
+              value={
+                !inverted ? value : Math.round(value * 1.609344 * 100) / 100
+              }
+              id="km"
+              type="number"
+              onChange={onChange}
+              disabled={inverted}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="miles">Miles</label>
+            <input
+              value={
+                inverted ? value : Math.round(value * 0.62137119 * 100) / 100
+              }
+              id="miles"
+              type="number"
+              onChange={onChange}
+              disabled={!inverted}
+            />
+          </div>
+
+          <button onClick={reset}>Reset</button>
+          <button onClick={onInvert}>Invert</button>
+        </div>
+      );
+    }
+
+    function App() {
+      const [index, setIndex] = React.useState("2");
+
+      const onSelect = (event) => {
+        setIndex(event.target.value);
+      };
+
+      return (
+        <div>
+          <h1>Super Converter</h1>
+          <select value={index} onChange={onSelect}>
+            <option value="0">Select unit</option>
+            <option value="1">Minutes & Hours</option>
+            <option value="2">Km & Miles</option>
+          </select>
+          <hr />
+          {index === "0" ? "Please select unit" : null}
+          {index === "1" ? <MinutesToHours /> : null}
+          {index === "2" ? <KmToMiles /> : null}
         </div>
       );
     }
