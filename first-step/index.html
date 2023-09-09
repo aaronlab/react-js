@@ -15,25 +15,21 @@
   <script type="text/babel">
     const root = document.getElementById("root");
 
-    let counter = 0;
-    function countUp() {
-      counter += 1;
-      render();
-    }
+    function App() {
+      const [counter, setCounter] = React.useState(0);
 
-    function render() {
-      ReactDOM.render(<Container />, root);
-    }
+      const onClick = () => {
+        setCounter(counter + 1);
+      };
 
-    function Container() {
       return (
         <div>
           <h3>Total clicks: {counter}</h3>
-          <button onClick={countUp}>Click Me</button>
+          <button onClick={onClick}>Click Me</button>
         </div>
       );
     }
 
-    render();
+    ReactDOM.render(<App />, root);
   </script>
 </html>
