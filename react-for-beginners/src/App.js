@@ -1,44 +1,29 @@
-import Button from "./Button";
-import styles from "./App.module.css";
 import { useEffect, useState } from "react";
 
+function Hello() {
+  function byeFn() {
+    console.log("bye");
+  }
+
+  function hiFn() {
+    console.log("hi");
+
+    return byeFn;
+  }
+
+  useEffect(hiFn, []);
+
+  return <h1>Hello</h1>;
+}
+
 function App() {
-  const [counter, setValue] = useState(0);
-  const onClick = () => setValue((prev) => (prev += 1));
-
-  const [keyword, setKeyword] = useState("");
-  const onChange = (event) => setKeyword(event.target.value);
-
-  console.log("App rendered");
-
-  useEffect(() => {
-    console.log("Call the API");
-  }, []);
-
-  useEffect(() => {
-    if (keyword !== "" && keyword.length > 5) {
-      console.log("Search FOR", keyword);
-    }
-  }, [keyword]);
-
-  useEffect(() => {
-    console.log("Counter changed", counter);
-  }, [counter]);
+  const [showing, setShowing] = useState(false);
+  const onClick = () => setShowing((prev) => !prev);
 
   return (
     <div>
-      <input
-        value={keyword}
-        onChange={onChange}
-        type="text"
-        placeholder="Search here"
-      />
-
-      <h1 className={styles.title}>Welcome back!</h1>
-
-      <p>{counter}</p>
-
-      <Button text={"Click Me"} onClick={onClick} />
+      {showing ? <Hello /> : null}
+      <button onClick={onClick}>{showing ? "Hide" : "Show"}</button>
     </div>
   );
 }
