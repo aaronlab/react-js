@@ -1,33 +1,29 @@
 import styled from "styled-components";
 
-const MainWrapper = styled.div`
+const Father = styled.div`
   display: flex;
+  flex-direction: column;
 `;
 
-const Box = styled.div<{ bgColor: string }>`
-  background-color: ${(props) => props.bgColor};
-  width: 100px;
-  height: 100px;
-`;
-
-const Text = styled.span`
-  color: white;
-  font-size: 24px;
-`;
-
-const Circle = styled(Box)`
-  border-radius: 50px;
+const Input = styled.input.attrs({
+  required: true,
+  minLength: 10,
+  maxLength: 20,
+})`
+  background-color: tomato;
 `;
 
 export const App = () => {
   return (
-    <MainWrapper>
-      <Box bgColor="teal">
-        <Text>Hello</Text>
-      </Box>
-      <Circle bgColor="tomato">
-        <Text>World!</Text>
-      </Circle>
-    </MainWrapper>
+    <Father as="header">
+      <Input />
+      <Input />
+      <Input />
+      <Input />
+      <Input />
+      <Input as="a" href="/">
+        This is an A
+      </Input>
+    </Father>
   );
 };
