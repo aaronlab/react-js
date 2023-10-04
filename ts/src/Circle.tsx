@@ -1,3 +1,4 @@
+import { useState } from "react";
 import styled from "styled-components";
 
 interface ContainerProps {
@@ -20,6 +21,10 @@ interface CircleProps {
 }
 
 function Circle({ bgColor, borderColor, text = "defulat" }: CircleProps) {
+  const [counter, setCounter] = useState<number>(1);
+
+  setCounter(2);
+
   return (
     <div>
       <Container bgColor={bgColor} borderColor={borderColor ?? bgColor}>
