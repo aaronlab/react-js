@@ -1,4 +1,12 @@
 import { useState } from "react";
+import styled from "styled-components";
+
+const Circle = styled.div`
+  width: 100px;
+  height: 100px;
+  background-color: ${(props) => props.theme.textColor};
+  border-radius: 50px;
+`;
 
 function App() {
   const [value, setValue] = useState("");
@@ -12,9 +20,9 @@ function App() {
   };
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    console.log('On Submit')
+    console.log("On Submit");
   };
 
   return (
@@ -26,6 +34,9 @@ function App() {
           type="text"
           placeholder="user name"
         />
+
+        <Circle />
+
         <button>Log in</button>
       </form>
     </div>
