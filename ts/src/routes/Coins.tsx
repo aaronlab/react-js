@@ -1,9 +1,13 @@
-import { DragEvent } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { CoinResponse } from "../response/coin.response";
+import axios from "axios";
 
 const Container = styled.div`
   padding: 0px 20px;
+  margin: 0 auto;
+  max-width: 480px;
 `;
 
 const Header = styled.header`
@@ -40,49 +44,45 @@ const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
 `;
 
-const coins = [
-  {
-    id: "btc-bitcoin",
-    name: "Bitcoin",
-    symbol: "BTC",
-    rank: 1,
-    is_new: false,
-    is_active: true,
-    type: "coin",
-  },
-  {
-    id: "eth-ethereum",
-    name: "Ethereum",
-    symbol: "ETH",
-    rank: 2,
-    is_new: false,
-    is_active: true,
-    type: "coin",
-  },
-  {
-    id: "usdt-tether",
-    name: "Tether",
-    symbol: "USDT",
-    rank: 3,
-    is_new: false,
-    is_active: true,
-    type: "token",
-  },
-];
+const Loader = styled.span`
+  font-size: 24px;
+  color: ${(props) => props.theme.textColor};
+  display: block;
+`;
 
 function Coins() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [coins, setCoins] = useState<CoinResponse[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+
+      const response = await axios.get("https://api.coinpaprika.com/v1/coins");
+      const newCoins = response.data as CoinResponse[];
+
+      setCoins(newCoins.slice(0, 100));
+
+      setLoading(false);
+    })();
+  }, []);
+
   return (
     <Container>
       <Header>
         <Title>Coins</Title>
       </Header>
-      <CoinsList>
-        {coins.map((coin) => (
-          <Coin key={coin.id}>
-            <Link to={`/${coin.id}`}>{coin.name} &rarr;</Link>
-          </Coin>
-        ))}
-      </CoinsList>
+      {loading ? (
+        <Loader>Loding...</Loader>
+      ) : (
+        <CoinsList>
+          {coins.map((coin) => (
+            <Coin key={coin.id}>
+              <Link to={`/${coin.id}`}>{coin.name} &rarr;</Link>
+            </Coin>
+          ))}
+        </CoinsList>
+      )}
     </Container>
   );
 }
