@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { CoinResponse } from "../response/coin.response";
+import { ICoinResponse } from "../response/coin.response";
+import axios from "axios";
+import { IPriceResponse } from "../response/price.response";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -27,25 +29,43 @@ const Loader = styled.span`
   display: block;
 `;
 
-interface CoinRouteParams {
+interface ICoinRouteParams {
   coinId: string;
 }
 
-interface CoinRouteState {
-  coin?: CoinResponse | undefined;
+interface ICoinRouteState {
+  coin?: ICoinResponse | undefined;
 }
 
 function Coin() {
-  const { coinId } = useParams<CoinRouteParams>();
+  const { coinId } = useParams<ICoinRouteParams>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { state } = useLocation<CoinRouteState>();
+  const { state } = useLocation<ICoinRouteState>();
+  const [coin, setCoin] = useState<ICoinResponse>();
+  const [price, setPrice] = useState<IPriceResponse>();
+
+  useEffect(() => {
+    (async () => {
+      const [coinResponse, tickerResponse] = await Promise.all([
+        axios.get(`https://api.coinpaprika.com/v1/coins/${coinId}`),
+        axios.get(`https://api.coinpaprika.com/v1/tickers/${coinId}`),
+      ]);
+
+      setCoin(coinResponse.data);
+      setPrice(tickerResponse.data);
+    })();
+  }, []);
 
   return (
     <Container>
       <Header>
-        <Title>{state?.coin?.name ?? "Loading..."}</Title>
+        <Title>{state?.coin?.name ?? coin?.name ?? "Loading..."}</Title>
       </Header>
-      {loading ? <Loader>Loding...</Loader> : null}
+      {loading ? (
+        <Loader>Loding...</Loader>
+      ) : (
+        `${(price?.quotes?.USD.price ?? 0).toLocaleString()} USD`
+      )}
     </Container>
   );
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { CoinResponse } from "../response/coin.response";
+import { ICoinResponse } from "../response/coin.response";
 import axios from "axios";
 
 const Container = styled.div`
@@ -58,14 +58,14 @@ const Symbol = styled.img`
 
 function Coins() {
   const [loading, setLoading] = useState<boolean>(false);
-  const [coins, setCoins] = useState<CoinResponse[]>([]);
+  const [coins, setCoins] = useState<ICoinResponse[]>([]);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
 
       const response = await axios.get("https://api.coinpaprika.com/v1/coins");
-      const newCoins = response.data as CoinResponse[];
+      const newCoins = response.data as ICoinResponse[];
 
       setCoins(newCoins.slice(0, 100));
 
@@ -90,9 +90,11 @@ function Coins() {
                   state: { coin },
                 }}
               >
-                <Symbol
-                  src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
-                />
+                {coin.symbol ? (
+                  <Symbol
+                    src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
+                  />
+                ) : null}
                 {coin.name} &rarr;
               </Link>
             </Coin>
