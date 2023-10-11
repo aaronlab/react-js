@@ -55,6 +55,8 @@ body {
 	font-family: 'Source Code Pro', monospace, sans-serif;
 	background-color: ${(props) => props.theme.bgColor};
 	color: ${(props) => props.theme.textColor};
+	font-weight: 300;
+	line-height: 1.2;
 }
 
 a {
