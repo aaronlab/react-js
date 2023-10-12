@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Link,
   Route,
@@ -9,10 +8,10 @@ import {
 } from "react-router-dom";
 import styled from "styled-components";
 import { ICoinResponse } from "../response/coin.response";
-import axios from "axios";
-import { IPriceResponse } from "../response/price.response";
 import Price from "./Price";
 import Chart from "./Chart";
+import { useQueries } from "@tanstack/react-query";
+import { getCoin, getPrice } from "../core/api";
 
 interface ICoinRouteParams {
   coinId: string;
@@ -100,28 +99,26 @@ const Tab = styled.span<{ isActive: boolean }>`
 
 function Coin() {
   const { coinId } = useParams<ICoinRouteParams>();
-  const [loading, setLoading] = useState<boolean>(false);
   const { state } = useLocation<ICoinRouteState>();
-  const [coin, setCoin] = useState<ICoinResponse>();
-  const [price, setPrice] = useState<IPriceResponse>();
+
   const chartMatch = useRouteMatch("/:coinId/chart");
   const priceMatch = useRouteMatch("/:coinId/price");
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-
-      const [coinResponse, tickerResponse] = await Promise.all([
-        axios.get(`https://api.coinpaprika.com/v1/coins/${coinId}`),
-        axios.get(`https://api.coinpaprika.com/v1/tickers/${coinId}`),
-      ]);
-
-      setCoin(coinResponse.data);
-      setPrice(tickerResponse.data);
-
-      setLoading(false);
-    })();
-  }, [coinId]);
+  const [
+    { isLoading: isInfoLoading, data: coin },
+    { isLoading: isPriceLoading, data: price },
+  ] = useQueries({
+    queries: [
+      {
+        queryKey: ["info", coinId],
+        queryFn: () => getCoin(coinId),
+      },
+      {
+        queryKey: ["price", coinId],
+        queryFn: () => getPrice(coinId),
+      },
+    ],
+  });
 
   return (
     <Container>
@@ -129,12 +126,12 @@ function Coin() {
         <Title>
           {state?.coin?.name
             ? state.coin.name
-            : loading
+            : isInfoLoading
             ? "Loading..."
             : coin?.name ?? ""}
         </Title>
       </Header>
-      {loading ? (
+      {isPriceLoading ? (
         <Loader>Loding...</Loader>
       ) : (
         <>
