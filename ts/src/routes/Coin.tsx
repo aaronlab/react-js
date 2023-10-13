@@ -12,6 +12,9 @@ import Price from "./Price";
 import Chart from "./Chart";
 import { useQueries } from "@tanstack/react-query";
 import { getCoin, getPrice } from "../core/api";
+import { useEffect } from "react";
+import { useTitle } from "../hooks/useTitle";
+import setTitle from "../utils/setTitle";
 
 interface ICoinRouteParams {
   coinId: string;
@@ -120,6 +123,12 @@ function Coin() {
     ],
   });
 
+  useTitle("Coin");
+
+  useEffect(() => {
+    setTitle(state?.coin?.name ?? coin?.name ?? "Coin");
+  }, [coin]);
+
   return (
     <Container>
       <Header>
@@ -180,7 +189,7 @@ function Coin() {
               <Price />
             </Route>
             <Route path={"/:coinId/chart"}>
-              <Chart />
+              <Chart coinId={coinId} />
             </Route>
           </Switch>
         </>

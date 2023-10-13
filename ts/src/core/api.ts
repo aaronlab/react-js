@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ICoinResponse } from "../response/coin.response";
 import { IPriceResponse } from "../response/price.response";
+import { ICoinChartResponse } from "../response/coin-chart.response";
 
 const V1 = "https://api.coinpaprika.com/v1";
 
@@ -17,4 +18,11 @@ export async function getCoin(coinId: string) {
 export async function getPrice(coinId: string) {
   const response = await axios.get(`${V1}/tickers/${coinId}`);
   return response.data as IPriceResponse;
+}
+
+export async function getCoinHistory(coinId: string) {
+  const response = await axios.get(
+    `https://ohlcv-api.nomadcoders.workers.dev?coinId=${coinId}`
+  );
+  return response.data as ICoinChartResponse[];
 }
