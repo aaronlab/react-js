@@ -12,9 +12,7 @@ import Price from "./Price";
 import Chart from "./Chart";
 import { useQueries } from "@tanstack/react-query";
 import { getCoin, getPrice } from "../core/api";
-import { useEffect } from "react";
-import { useTitle } from "../hooks/useTitle";
-import setTitle from "../utils/setTitle";
+import { Helmet } from "react-helmet";
 
 interface ICoinRouteParams {
   coinId: string;
@@ -119,18 +117,22 @@ function Coin() {
       {
         queryKey: ["price", coinId],
         queryFn: () => getPrice(coinId),
+        // refetchInterval: 5000,
       },
     ],
   });
 
-  useTitle("Coin");
-
-  useEffect(() => {
-    setTitle(state?.coin?.name ?? coin?.name ?? "Coin");
-  }, [coin]);
-
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state?.coin?.name
+            ? state.coin.name
+            : isInfoLoading
+            ? "Loading..."
+            : coin?.name ?? ""}
+        </title>
+      </Helmet>
       <Header>
         <Title>
           {state?.coin?.name
@@ -156,8 +158,8 @@ function Coin() {
             </OverviewItem>
 
             <OverviewItem>
-              <span>Open Source: </span>
-              <span>{coin?.open_source ? "Yes" : "No"}</span>
+              <span>Price: </span>
+              <span>${(price?.quotes?.USD.price ?? 0).toFixed(3)}</span>
             </OverviewItem>
           </Overview>
 
