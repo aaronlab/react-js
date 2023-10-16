@@ -2,6 +2,7 @@ import {
   Link,
   Route,
   Switch,
+  useHistory,
   useLocation,
   useParams,
   useRouteMatch,
@@ -35,9 +36,21 @@ const Header = styled.header`
   align-items: center;
 `;
 
+const BackButton = styled.button`
+  height: 48px;
+  width: 48px;
+  justify-self: flex-start;
+  border-color: ${(props) => props.theme.textColor};
+  background-color: ${(props) => props.theme.bgColor};
+  border-radius: 8px;
+`;
+
 const Title = styled.h1`
+  width: 100%;
   font-size: 48px;
   color: ${(props) => props.theme.accentColor};
+  justify-self: center;
+  text-align: center;
 `;
 
 const Loader = styled.span`
@@ -122,6 +135,12 @@ function Coin() {
     ],
   });
 
+  const history = useHistory();
+
+  const goBack = () => {
+    history.goBack();
+  };
+
   return (
     <Container>
       <Helmet>
@@ -134,6 +153,7 @@ function Coin() {
         </title>
       </Helmet>
       <Header>
+        <BackButton onClick={goBack}>👈</BackButton>
         <Title>
           {state?.coin?.name
             ? state.coin.name
