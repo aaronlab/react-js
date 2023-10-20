@@ -15,6 +15,8 @@ import { useQueries } from "@tanstack/react-query";
 import { getCoin, getPrice } from "../core/api";
 import { Helmet } from "react-helmet";
 import { useEffect } from "react";
+import { useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../core/atoms";
 
 interface ICoinRouteParams {
   coinId: string;
@@ -112,16 +114,14 @@ const Tab = styled.span<{ isActive: boolean }>`
   }
 `;
 
-interface ICoinProps {
-  isDark: boolean;
-}
-
-function Coin({ isDark }: ICoinProps) {
+function Coin() {
   const { coinId } = useParams<ICoinRouteParams>();
   const { state } = useLocation<ICoinRouteState>();
 
   const chartMatch = useRouteMatch("/:coinId/chart");
   const priceMatch = useRouteMatch("/:coinId/price");
+
+  const history = useHistory();
 
   const [
     { isLoading: isInfoLoading, data: coin },
@@ -139,8 +139,7 @@ function Coin({ isDark }: ICoinProps) {
       },
     ],
   });
-
-  const history = useHistory();
+  const setIsDark = useSetRecoilState(isDarkAtom);
 
   const goBack = () => {
     history.goBack();
@@ -172,6 +171,9 @@ function Coin({ isDark }: ICoinProps) {
             ? "Loading..."
             : coin?.name ?? ""}
         </Title>
+        <button onClick={() => setIsDark((current) => !current)}>
+          Toggle Mode
+        </button>
       </Header>
       {isPriceLoading ? (
         <Loader>Loding...</Loader>
@@ -222,7 +224,7 @@ function Coin({ isDark }: ICoinProps) {
               <Price />
             </Route>
             <Route path={"/:coinId/chart"}>
-              <Chart coinId={coinId} isDark={isDark} />
+              <Chart coinId={coinId} />
             </Route>
           </Switch>
         </>

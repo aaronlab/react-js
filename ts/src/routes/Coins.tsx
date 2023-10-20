@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { getCoins } from "../core/api";
 import { Helmet } from "react-helmet";
+import { useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../core/atoms";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -56,12 +58,9 @@ const Symbol = styled.img`
   margin-right: 16px;
 `;
 
-interface ICoinsProps {
-  toggleDark: () => void;
-}
-
-function Coins({ toggleDark }: ICoinsProps) {
+function Coins() {
   const { isLoading, data } = useQuery(["allCoins"], getCoins);
+  const setIsDark = useSetRecoilState(isDarkAtom);
 
   return (
     <Container>
@@ -71,7 +70,9 @@ function Coins({ toggleDark }: ICoinsProps) {
 
       <Header>
         <Title>Coins</Title>
-        <button onClick={toggleDark}>Toggle Dark Mode</button>
+        <button onClick={() => setIsDark((current) => !current)}>
+          Toggle Mode
+        </button>
       </Header>
       {isLoading ? (
         <Loader>Loding...</Loader>
