@@ -56,7 +56,11 @@ const Symbol = styled.img`
   margin-right: 16px;
 `;
 
-function Coins() {
+interface ICoinsProps {
+  toggleDark: () => void;
+}
+
+function Coins({ toggleDark }: ICoinsProps) {
   const { isLoading, data } = useQuery(["allCoins"], getCoins);
 
   return (
@@ -67,6 +71,7 @@ function Coins() {
 
       <Header>
         <Title>Coins</Title>
+        <button onClick={toggleDark}>Toggle Dark Mode</button>
       </Header>
       {isLoading ? (
         <Loader>Loding...</Loader>

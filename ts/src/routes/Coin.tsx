@@ -14,6 +14,7 @@ import Chart from "./Chart";
 import { useQueries } from "@tanstack/react-query";
 import { getCoin, getPrice } from "../core/api";
 import { Helmet } from "react-helmet";
+import { useEffect } from "react";
 
 interface ICoinRouteParams {
   coinId: string;
@@ -111,7 +112,11 @@ const Tab = styled.span<{ isActive: boolean }>`
   }
 `;
 
-function Coin() {
+interface ICoinProps {
+  isDark: boolean;
+}
+
+function Coin({ isDark }: ICoinProps) {
   const { coinId } = useParams<ICoinRouteParams>();
   const { state } = useLocation<ICoinRouteState>();
 
@@ -140,6 +145,12 @@ function Coin() {
   const goBack = () => {
     history.goBack();
   };
+
+  useEffect(() => {
+    if (!chartMatch && !priceMatch) {
+      history.push(`/${coinId}/chart`);
+    }
+  }, []);
 
   return (
     <Container>
@@ -211,7 +222,7 @@ function Coin() {
               <Price />
             </Route>
             <Route path={"/:coinId/chart"}>
-              <Chart coinId={coinId} />
+              <Chart coinId={coinId} isDark={isDark} />
             </Route>
           </Switch>
         </>

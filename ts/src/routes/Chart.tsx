@@ -5,9 +5,10 @@ import getSafeNumbers from "../utils/getSafeNumbers";
 
 interface ChartProps {
   coinId: string;
+  isDark: boolean;
 }
 
-function Chart({ coinId }: ChartProps) {
+function Chart({ coinId, isDark }: ChartProps) {
   const { isLoading, data } = useQuery(["ohlcv", coinId], () =>
     getCoinHistory(coinId)
   );
@@ -39,6 +40,9 @@ function Chart({ coinId }: ChartProps) {
             // },
           ]}
           options={{
+            theme: {
+              mode: isDark ? "dark" : "light",
+            },
             chart: {
               height: 500,
               width: 500,
