@@ -1,126 +1,63 @@
 import { useForm } from "react-hook-form";
+import { atom, useRecoilState } from "recoil";
 
-interface IFormData {
-  email: string;
-  firstName: string;
-  lastName: string;
-  userName: string;
-  password: string;
-  password1: string;
-  serverError: string;
+interface IToDo {
+  text: string;
+  id: number;
+  category: "TO_DO" | "DOING" | "DONE";
 }
 
+interface IToDoForm {
+  toDo: string;
+}
+
+const toDoState = atom<IToDo[]>({
+  key: "toDo",
+  default: [],
+});
+
 function ToDoList() {
-  const {
-    register,
-    watch,
-    handleSubmit,
-    formState: { errors },
-    setError,
-  } = useForm<IFormData>({
-    defaultValues: {
-      email: "@naver.com",
-    },
-  });
+  const [toDos, setToDos] = useRecoilState(toDoState);
 
-  const onValid = (data: IFormData) => {
-    console.log(data);
-    if (data.password !== data.password1) {
-      setError(
-        "password1",
-        {
-          message: "Passwords are not the same",
-        },
-        {
-          shouldFocus: true,
-        }
-      );
-    }
+  const { register, handleSubmit, setValue } = useForm<IToDoForm>();
 
-    setError("serverError", { message: "A server error occurred" });
+  const onSubmit = ({ toDo }: IToDoForm) => {
+    setToDos((prev) => [
+      {
+        text: toDo,
+        id: prev.length,
+        category: "TO_DO",
+      },
+      ...prev,
+    ]);
+    setValue("toDo", "");
   };
 
   return (
     <div>
+      <h1>To Do</h1>
+      <hr />
       <form
+        onSubmit={handleSubmit(onSubmit)}
         style={{
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
         }}
-        onSubmit={handleSubmit(onValid)}
       >
         <input
-          {...register("email", {
-            required: "Email is required",
-            pattern: {
-              value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-              message: "Invalid email",
-            },
+          {...register("toDo", {
+            required: "Please write a to do",
           })}
-          placeholder="Email"
+          placeholder="Write a to do"
         />
-        <span>{errors?.email?.message}</span>
-
-        <input
-          {...register("firstName", {
-            required: "First name is required",
-            validate: {
-              aaron: (value) => {
-                if (value.includes("aaron")) {
-                  return true;
-                }
-                return "Only aaron allowed";
-              },
-            },
-          })}
-          placeholder="First Name"
-        />
-        <span>{errors.firstName?.message}</span>
-
-        <input
-          {...register("lastName", { required: "Last name is required" })}
-          placeholder="Last Name"
-        />
-        <span>{errors.lastName?.message}</span>
-
-        <input
-          {...register("userName", {
-            required: "User name is required",
-            minLength: {
-              value: 10,
-              message: "User name shouldn't be less than 10",
-            },
-          })}
-          placeholder="User Name"
-        />
-        <span>{errors.userName?.message}</span>
-
-        <input
-          {...register("password", {
-            required: "Password is required",
-            minLength: {
-              value: 5,
-              message: "Password shouldn't be less than 5",
-            },
-          })}
-          placeholder="Password"
-        />
-        <span>{errors.password?.message}</span>
-
-        <input
-          {...register("password1", {
-            required: "Password is required",
-            minLength: 5,
-          })}
-          placeholder="Confirm Password"
-        />
-        <span>{errors.password1?.message}</span>
-
         <button>Add</button>
-
-        <span>{errors.serverError?.message}</span>
       </form>
+      <ul>
+        {toDos.map((toDo) => (
+          <li key={toDo.id}>{toDo.text}</li>
+        ))}
+      </ul>
     </div>
   );
 }
